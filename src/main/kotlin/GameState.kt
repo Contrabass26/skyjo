@@ -16,4 +16,20 @@ class GameState(val justDrawn: Short?, val visibleCards: List<Short>, val myCard
         oppCards.forEach { deck -= it.toSet() }
         return deck
     }
+
+    fun shouldDrawBlind(): Boolean {
+        assert(justDrawn == null)
+        // Aiming for the lowest card
+        val averageBlindValue = getPickupDeck().average()
+        val visibleValue = visibleCards[0]
+        return averageBlindValue < visibleValue
+    }
+
+    fun getSlotToPlay(): Short {
+//        val cardToPlay = justDrawn ?: throw AssertionError("No card just drawn")
+        // We want to put it in the slot with the highest average value
+        val averageBlindValue = getPickupDeck().average()
+        val currentValues = myCards.map { (it ?: averageBlindValue).toDouble() }
+        return currentValues.indexedMax().first!!.toShort()
+    }
 }
